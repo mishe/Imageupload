@@ -8,7 +8,7 @@
 * loading:'.loading',           页面显示loading的图标selector
 * url:'',                       接收数据的api接口地址
 * maxFileSize:10*1024*1024,     服务端支持的最大单文件大小
-* format:/^image/i,             支持的文件格式
+* format:/^image/i,             支持的文件格式. images text .....
 * isCompress:true,              如果是图片，可以开启客户端压缩，减少传输的数据文件
 * compressNum:0.6,              图片的压缩率，0~1 设置为1可能最终结果比未压缩还大，请慎用1.
 * beforeUpload:function(){},    上传之前的处理，返回false可以阻止文件的上传
@@ -32,19 +32,23 @@
 ```
 ```javascript
 $('#filesss').mobileUpload({
-        url:'',
-        beforeUpload:function(){
-            console.log('beforeUpload')},
-        uploadStart: function(){console.log('uploadStart')},
-        uploadProgress: function(v){console.log('进度'+v)},
-        uploadError: function(){console.log('uploadError')},
-        showThumbnail:function(file){
-            console.log('原图大小：'+file.length);
-            $('#rrr1').append('<img src="'+file+'">');
+        url: '',
+        beforeUpload: function () {
+            console.log('beforeUpload')
         },
-        afterUpload:function(file,data){
-            console.log('压缩后大小：'+file.length);
-            $('#rrr2').append('<img src="'+file+'">');
+        uploadStart: function (file) {
+            console.log('uploadStart')
+            console.log('原文件大小：' + file.length);
+        },
+        uploadProgress: function (v) {console.log('进度' + v)},
+        uploadError: function () {console.log('uploadError')},
+        showThumbnail: function (file) {
+
+            $('#rrr1').append('<img src="' + file + '">');
+        },
+        afterUpload: function (file, data) {
+            console.log('压缩后大小：' + file.length);
+            $('#rrr2').append('<img src="' + file + '">');
         }
     });
 ```
