@@ -1,52 +1,53 @@
-    (function(global){
-        var _defaultSetting={
-            loading:'.loading',
-            url:'', //接收数据的api接口地址
-            maxFileSize:10*1024*1024,
-            format:/^image/i,
-            isCompress:true,
-            compressNum:0.6, // 0~1 设置为1可能最终结果比未压缩还大，请慎用1.
-            beforeUpload:function(){},
-            uploadStart: function(){},
-            afterUpload: function(){},
-            uploadProgress: function(v){},
-            uploadError: function(){},
-            showThumbnail:function(){}
-        },
-        opt={};
-        function mobileUpload(options){
-            opt= $.extend(true,_defaultSetting,options);
+(function (global) {
+        var _defaultSetting = {
+                    loading: '.loading',
+                    url: '', //接收数据的api接口地址
+                    maxFileSize: 10 * 1024 * 1024,
+                    format: /^image/i,
+                    isCompress: true,
+                    compressNum: 0.6, // 0~1 设置为1可能最终结果比未压缩还大，请慎用1.
+                    beforeUpload: function () {},
+                    uploadStart: function () {},
+                    afterUpload: function () {},
+                    uploadProgress: function (v) {},
+                    uploadError: function () {},
+                    showThumbnail: function () {}
+                },
+                opt = {};
+
+        function mobileUpload(options) {
+            opt = $.extend(true, _defaultSetting, options);
             $(this).on('change', function () {
                 startUpload(this);
             });
             return this;
         }
 
-        function startUpload(el){
-            var files=el.files,
-                len=files.length;
+        function startUpload(el) {
+            var files = el.files,
+                    len = files.length;
             for (var i = len - 1; i >= 0; i--) {
                 (function (file) {
-                    if(file.size > opt.maxFileSize){
-                        console.log('您上传的'+file.name+',图片尺寸过大，最大限制为10M');
+                    if (file.size > opt.maxFileSize) {
+                        console.log('您上传的' + file.name + ',图片尺寸过大，最大限制为10M');
                         return false;
                     }
                     //有些安卓手机无法获取文件类型
                     if (opt.format.test(file.type) || !file.type) {
-                        if(opt.beforeUpload()===false){
+                        if (opt.beforeUpload() === false) {
                             return false;
                         }
                         readFile(file);
-                    }else{
+                    } else {
                         console.log("您上传的文件不符合上传的要求");
                     }
                 }(files[i]));
             }
         }
 
-        function readFile(file){
+        function readFile(file) {
             var reader = new FileReader();
-            reader.onloadstart=function(){
+            reader.onloadstart = function () {
                 opt.uploadStart && opt.uploadStart();
             };
             reader.onload = function () {
@@ -55,54 +56,54 @@
                 reader.onload = null;
                 reader = null;
             };
-            reader.onprogress=function(e){
+            reader.onprogress = function (e) {
                 if (e.lengthComputable) {
                     var percentLoaded = Math.round((e.loaded / e.total) * 100);
                     opt.uploadProgress && opt.uploadProgress(percentLoaded);
                 }
             };
-            reader.onabort=function(){
+            reader.onabort = function () {
                 opt.uploadError && opt.uploadError();
             }
             reader.readAsDataURL(file);
         }
 
-        function upLoadFile(file){
-            var _canvas=$('<canvas style="display: none"></canvas>')[0];
-            var img=new Image();
-            img.onload=function(){
-                opt.showThumbnail && opt.showThumbnail(file);
-                if(opt.isCompress) {
+        function upLoadFile(file) {
+            var _canvas = $('<canvas style="display: none"></canvas>')[0];
+            var img = new Image();
+            img.onload = function () {
+                if (opt.isCompress) {
                     _canvas.width = img.naturalWidth;
                     _canvas.height = img.naturalHeight;
                     var context = _canvas.getContext('2d');
                     context.drawImage(img, 0, 0);
                     ajaxUploadFile(_canvas.toDataURL('image/jpeg', opt.compressNum));
-                }else{
+                } else {
                     ajaxUploadFile(file);
                 }
             };
-            img.src=file;
+            img.src = file;
         }
 
-        function ajaxUploadFile(file){
+        function ajaxUploadFile(file) {
             $(opt.loading).show();
+            opt.showThumbnail && opt.showThumbnail(file);
             $.ajax({
-                url:opt.url,
-                type:'post',
-                data:{
-                    file:file
+                url: opt.url,
+                type: 'post',
+                data: {
+                    file: file
                 },
-                success:function(d){
+                success: function (d) {
                     $(opt.loading).hide();
-                    opt.afterUpload && opt.afterUpload(file,d);
+                    opt.afterUpload && opt.afterUpload(file, d);
                 },
-                error:function(d){
+                error: function (d) {
                     $(opt.loading).hide();
                     opt.uploadError && opt.uploadError(d);
                 }
             });
         }
 
-        $.fn.mobileUpload=mobileUpload;
+        $.fn.mobileUpload = mobileUpload;
     }(this));
