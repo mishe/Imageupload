@@ -44,9 +44,8 @@ $('#filesss').mobileUpload({
         },
         uploadProgress: function (v) {console.log('进度' + v)},
         uploadError: function () {console.log('uploadError')},
-        showThumbnail: function (file) {
-
-            $('#rrr1').append('<img src="' + file + '">');
+        showThumbnail: function (file,imgRotation) {
+            $('#rrr1').append('<img src="' + file + '">').css('transform','rotate('+(imgRotation)+'deg)')
         },
         afterUpload: function (file, data) {
             console.log('压缩后大小：' + file.length);
