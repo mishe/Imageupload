@@ -1,12 +1,14 @@
 module.exports = function (options) {
     var _defaultSetting = {
             loading: '.loading',
-            // url: 'http://192.168.62.244:8080/app/webservice/v2/loveractivity/upload', //接收数据的api接口地址
-            url: '/app/webservice/v2/loveractivity/upload', //接收数据的api接口地址
+            url: 'http://192.168.62.244:8080/app/webservice/v2/loveractivity/upload', //接收数据的api接口地址
+            // url: '/app/webservice/v2/loveractivity/upload', //接收数据的api接口地址
             // url: '', //接收数据的api接口地址
             maxFileSize: 500 * 1024,
             format: 'image',
             isCompress: true,
+            maxX:500,  //压缩后的图片最大宽度
+            maxY:500,  //压缩后的图片最大高度
             bindUser:false, //上传图片绑定用户
             clipSquare:false, //压缩上传前把图片截取成正方形，
             compressNum: 0.6, // 0~1 设置为1可能最终结果比未压缩还大，请慎用1.
@@ -103,19 +105,19 @@ module.exports = function (options) {
                         imgRotation = 270;
                         break;
                 }
-
+                alert(img.naturalWidth+','+ img.naturalHeight)
                 if (opt.isCompress) {
                     if (opt.clipSquare) {
-                        var min = Math.min(img.naturalWidth, img.naturalHeight);
+                        var min = Math.min(img.naturalWidth, img.naturalHeight,opt.maxX,opt.maxY);
                         _canvas.width = min;
                         _canvas.height = min;
                     } else {
-                        _canvas.width = img.naturalWidth;
-                        _canvas.height = img.naturalHeight;
+                        _canvas.width = Math.min(img.naturalWidth,opt.maxX);
+                        _canvas.height = Math.min(img.naturalHeight,opt.maxY);
                     }
 
                     var context = _canvas.getContext('2d');
-                    context.drawImage(img, 0, 0);
+                    context.drawImage(img, 0, 0,_canvas.width,_canvas.height);
                     ajaxUploadFile(_canvas.toDataURL('image/jpeg', opt.compressNum),imgRotation);
                 } else {
                     ajaxUploadFile(file,imgRotation);
@@ -238,7 +240,7 @@ module.exports = function (options) {
     };
 
     function ajaxUploadFile(file,imgRotation) {
-        alert(imgRotation)
+        // alert(imgRotation)
         if(file.length>opt.maxFileSize){
             console.log('您上传的' + file.name + ',图片尺寸过大，最大限制为500K');
             $.toast('您上传的文件尺寸过大，最大限制为500K');
