@@ -246,7 +246,7 @@ module.exports = function (options) {
         }
 
         $(opt.loading).show();
-        opt.showThumbnail && opt.showThumbnail(file);
+        opt.showThumbnail && opt.showThumbnail(file,imgRotation);
 
         $.sync({
             url: opt.url,
