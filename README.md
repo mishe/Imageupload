@@ -1,7 +1,8 @@
 # Imageupload
-使用File API+canvas 客户端压缩图片，并实现文件上传服务端
+使用File API+canvas 客户端压缩图片，并实现文件上传服务端，文件依赖 JQUERY
 
-文件依赖 JQUERY
+### 2017-02-08 解决拍摄的图片旋转角度问题
+
 
 ## 参数API 
 
