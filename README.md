@@ -3,6 +3,7 @@
 
 ### 2017-02-08 解决拍摄的图片旋转角度问题，图片压缩问题
 
+借鉴参考：http://tgideas.qq.com/webplat/info/news_version3/804/808/811/m579/201409/278736.shtml
 
 ## 参数API 
 
